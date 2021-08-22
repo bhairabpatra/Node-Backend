@@ -4,16 +4,29 @@ bodyParser = require('body-parser');
 path = require('path');
 mongoose = require('mongoose');
 cors = require('cors');
-const morgan = require('morgan')
+const morgan = require('morgan');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken')
 dataBaseConfig = require('./database/db');
+const authJwt = require('./helpers/jwt');
+const authorize = require("./helpers/jwt");
 
+// app.use(authJwt);
+// app.use((err,req,res,next)  => {
+//     if(err){
+//         res.status(500).json({
+//             message: "erroe in the server"
+//         })
+//     }
+// })
+app.use(cors());
+app.options('*' , cors())
 
-
+ 
 // Connecting mongoDB
 mongoose.Promise = global.Promise;
 mongoose.connect(dataBaseConfig.db, {
-  useNewUrlParser: true,
-  useFindAndModify: false
+  useNewUrlParser: true, useUnifiedTopology: true
 }).then(() => {
     console.log('Database connected sucessfully ')
   },
@@ -29,21 +42,21 @@ app.use(express.json());
 app.use(morgan('tiny'));
 
 
-// app.use(bodyParser.json());
-// app.use(bodyParser.urlencoded({
-//   extended: false
-// }));
-// app.use(cors());
-
-
-
 // Set up express js port
 const productRoute = require('./routes/products.route')
+const categoryRoute = require('./routes/category.route')
+const userRoute = require("./routes/user.route");
 // RESTful API root
 app.use('/api', productRoute)
+app.use('/api/category', categoryRoute)
+app.use('/api/user', userRoute)
 
 
 
+ 
+
+ 
+ 
 //routing 
 app.get('/products' , (req,res) =>{
         const product =[
@@ -71,6 +84,10 @@ app.post('/products' , (req,res) =>{
             res.send(newProdcuts)
         })
 
+ 
+ 
+
+ 
 
  
 
